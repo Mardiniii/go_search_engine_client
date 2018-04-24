@@ -16,6 +16,11 @@
     #searchInputText {
       width: 80%;
     }
+
+    #resultsTitle {
+      font-size: 12px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -26,28 +31,22 @@
       </div>
     </div>
     <!-- Search Form -->
-    <div class="row justify-content-center mb-5">
-      <div class="col-6">
+    <div class="row justify-content-center mb-3">
+      <div class="col-6 mb-3">
         <form action="/search" class="form-inline" id="searchForm">
           <label class="sr-only" for="searchInputText">Search</label>
           <input type="text" name="input" class="form-control mb-2 mr-sm-2" id="searchInputText" placeholder="What are you looking for?">
           <button type="submit" class="btn btn-primary mb-2">Search</button>
         </form>
       </div>
+      <div class="col-md-12">
+        <p class="mb-0" id="resultsTitle">Come on, give a chance to this amazing search engine!</p>
+      </div>
     </div>
 
     <!-- Results -->
     <div class="container" id="results">
-      {{range .}}
-        <div class="row">
-          <div class="col-12">
-            <h4 class="mb-0">{{.Title}}</h4>
-            <a href="{{.URL}}">{{.URL}}</a>
-            <p class="mb-0">{{.Description}}</p>
-          </div>
-        </div>
-        <hr>
-      {{end}}
+      <!-- All search results will be appnded here -->
     </div>
   </div>
 
@@ -55,10 +54,18 @@
   <script>
     $(document).ready(function() {
       function parseResponse(resultsContainer, data) {
+        console.log(data);
+        const resultsAmount = data.pages.length
         $(resultsContainer).html('');
-        $.each(data.pages, function(index, page) {
-          appendToResults(resultsContainer, page)
-        });
+
+        if (resultsAmount > 0) {
+          $.each(data.pages, function(index, page) {
+            appendToResults(resultsContainer, page)
+            setResultsTitle(resultsAmount + " results found it for: " + data.input, 'green')
+          });
+        } else {
+          setResultsTitle("I'm sorry, I couldn't find something relevant for your search, please try again with a new term", 'red')
+        }
       }
 
       function appendToResults(resultsContainer, page) {
@@ -69,8 +76,14 @@
         );
       }
 
+      function setResultsTitle(title, color) {
+        $("#resultsTitle").text(title);
+        $("#resultsTitle").css('color', color);
+      }
+
       $('#searchForm').submit(function(event) {
         event.preventDefault();
+
         const input = $(this).find('#searchInputText').val();
 
         $.ajax({
@@ -79,6 +92,9 @@
           url: '/search?input=' + input,
           success: function(data) {
             parseResponse("#results", data);
+          },
+          error: function (error) {
+            setResultsTitle("There was an error with your search: " + error + ", please try it again!", 'red')
           }
         });
       });

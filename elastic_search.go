@@ -89,7 +89,7 @@ func CreateIndex(i string) {
 
 // SearchContent returns the results for a given query
 func SearchContent(input string) []Page {
-	var pages []Page
+	pages := []Page{}
 
 	ctx := context.Background()
 	// Search for a page in the database using multi match query
