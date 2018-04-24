@@ -94,11 +94,10 @@ func SearchContent(input string) []Page {
 	ctx := context.Background()
 	// Search for a page in the database using multi match query
 	q := elastic.NewMultiMatchQuery(input, "title", "description", "body", "url").
-		Fuzziness("2").
-		MinimumShouldMatch("2")
+		Type("most_fields").
+		Fuzziness("2")
 	result, err := client.Search().
 		Index(indexName).
-		Pretty(true).
 		Sort("_score", false).
 		Query(q).
 		Do(ctx)
