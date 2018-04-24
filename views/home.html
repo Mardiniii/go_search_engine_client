@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Go Experimental Search Engine</title>
+
+  <!-- Bootstrap 4.1 CSS import -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <!-- jQuery and Bootstrap 4.1 JS imports -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  <style>
+    #searchInputText {
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-3">
+    <div class="row mb-3">
+      <div class="col text-center">
+        <h1>Go Experimental Search Engine</h1>
+      </div>
+    </div>
+    <!-- Search Form -->
+    <div class="row justify-content-center mb-5">
+      <div class="col-6">
+        <form action="/search" class="form-inline" id="searchForm">
+          <label class="sr-only" for="searchInputText">Search</label>
+          <input type="text" name="input" class="form-control mb-2 mr-sm-2" id="searchInputText" placeholder="What are you looking for?">
+          <button type="submit" class="btn btn-primary mb-2">Search</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="container" id="results">
+      {{range .}}
+        <div class="row">
+          <div class="col-12">
+            <h4 class="mb-0">{{.Title}}</h4>
+            <a href="{{.URL}}">{{.URL}}</a>
+            <p class="mb-0">{{.Description}}</p>
+          </div>
+        </div>
+        <hr>
+      {{end}}
+    </div>
+  </div>
+
+  <!-- JavaScript Handler to submit form -->
+  <script>
+    $(document).ready(function() {
+      function parseResponse(resultsContainer, data) {
+        $(resultsContainer).html('');
+        $.each(data.pages, function(index, page) {
+          appendToResults(resultsContainer, page)
+        });
+      }
+
+      function appendToResults(resultsContainer, page) {
+        $(resultsContainer).append(
+          '<div class="row"><div class="col-12"><h4 class="mb-0">' + page.title +
+          '</h4><a href="' + page.url + '">' + page.url + '</a><p class="mb-0">'
+          + page.description + '</p></div></div><hr>'
+        );
+      }
+
+      $('#searchForm').submit(function(event) {
+        event.preventDefault();
+        const input = $(this).find('#searchInputText').val();
+
+        $.ajax({
+          type: 'GET',
+          dataType: "json",
+          url: '/search?input=' + input,
+          success: function(data) {
+            parseResponse("#results", data);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
