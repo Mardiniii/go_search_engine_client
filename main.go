@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // Page struct to store in database
@@ -63,7 +65,9 @@ func main() {
 		CreateIndex(indexName)
 	}
 
-	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/search", searchHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	mux := mux.NewRouter()
+
+	mux.HandleFunc("/", homeHandler).Methods("GET")
+	mux.HandleFunc("/search", searchHandler).Methods("GET")
+	http.ListenAndServe(":8080", mux)
 }
