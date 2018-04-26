@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+  web:
+    image: mardini0803/go_search_engine_client
+    ports:
+      - 8080:8080
+    depends_on:
+      - elasticsearch
+
+networks:
+  default:
+    external:
+      name: go_search_engine
