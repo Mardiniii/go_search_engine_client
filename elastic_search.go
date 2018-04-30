@@ -94,7 +94,8 @@ func CreateIndex(i string) {
 		Do(context.Background())
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		return
 	}
 	if !createIndex.Acknowledged {
 		log.Println("CreateIndex was not acknowledged. Check that timeout value is correct.")
