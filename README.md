@@ -10,17 +10,22 @@ This project is licensed under the **MIT License**.
 
 ## Usage
 
-Clone the project to your local a machine a run the commands below to start the server locally:
+You can run all the components together the ElasticSearch server, the indexer service, two WEB app clients services and the load balancer with HAProxy using the docker-compose tool. Clone the project to your local a machine a run the commands below to start ElasticSearch server, the WEB client containers and the load balancer:
 
-```go
-go build
-./go_search_engine_client
+```bash
+docker-compose up --build
 ```
 
-Or, you can run the next command:
+Then, if you want to start crawling the internet, you should open a new tab and type the next command:
 
-```go
-go run *.go
+```bash
+docker-compose run indexer index STARTING_URL
+```
+
+To stop the docker-compose containers just run:
+
+```bash
+docker-compose down
 ```
 
 ## Contributions
