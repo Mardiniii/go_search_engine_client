@@ -8,14 +8,25 @@ services:
       - 9300:9300
     environment:
       - discovery.type=single-node
-  web:
+
+  web1:
     image: mardini0803/go_search_engine_client
     ports:
-      - 8080:8080
+      - 8081:8080
     depends_on:
       - elasticsearch
 
-networks:
-  default:
-    external:
-      name: go_search_engine
+  web2:
+    image: mardini0803/go_search_engine_client
+    ports:
+      - 8082:8080
+    depends_on:
+      - elasticsearch
+
+  haproxy:
+    build: ./haproxy
+    ports:
+        - 8080:8080
+    depends_on:
+      - web1
+      - web2
