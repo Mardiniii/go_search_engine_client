@@ -19,6 +19,11 @@ services:
     depends_on:
       - elasticsearch
 
+  indexer:
+    image: mardini0803/go_search_engine_indexer
+    depends_on:
+      - elasticsearch
+
   haproxy:
     build: ./haproxy
     ports:
